@@ -1,57 +1,41 @@
-import { Component } from "react";
-import CardList from "./components/card-list/card-list";
 import SearchBox from "./components/search/search-box";
+import { useState, useEffect } from "react";
+import CardList from "./components/card-list/card-list";
 import "./App.css";
 
-class App extends Component {
-  constructor() {
-    //Set state for Search filed and monsters lists
-    super();
-    this.state = {
-      monsters: [],
-      searchField: "",
-    };
-  }
-
-  componentDidMount() {
-    // fetch API
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((user) =>
-        this.setState(() => {
-          return {
-            monsters: user,
-          };
-        })
-      );
-  }
-
-  onSearch = (event) => {
-    // Onsearch function executes once to optimize the program
-    const searchField = event.target.value.toLocaleLowerCase();
-    this.setState(() => {
-      return { searchField };
-    });
+const App = () => {
+  const [onSearch, setOnSearch] = useState("");
+  const [monsters, setMonsters] = useState([]);
+  const [filteredMonsters, setFilteredMonsters] = useState(monsters);
+  const onSearchChange = (event) => {
+    const search = event.target.value.toLocaleLowerCase();
+    setOnSearch(search);
   };
 
-  render() {
-    const { monsters, searchField } = this.state; // Optimizing
-    const { onSearch } = this; // Optimizing
-    const fileteredMonsters = monsters.filter((monster) => {
-      return monster.name.toLocaleLowerCase().includes(searchField);
-    }); // Filtered monsters list so that we can find the monsters we search for
-    return (
-      <div className="App">
-        <h1 className="app-title">Monsters Roledex</h1>
-        <SearchBox
-          onChangeHandler={onSearch}
-          className={"search-box-monsters"}
-          placeholder={"Enter a monster"}
-        />
-        <CardList monsters={fileteredMonsters} />
-      </div>
-    );
-  }
-}
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((users) => setMonsters(users));
+  }, []);
 
+  useEffect(() => {
+    const changedMonster = monsters.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(onSearch);
+    });
+    setFilteredMonsters(changedMonster);
+  }, [monsters, onSearch]);
+
+  return (
+    <div className="App">
+      <h1 className="app-title">Hello World</h1>
+      <SearchBox
+        placeholder={"Find monster"}
+        type="search"
+        className="search-box-monster"
+        onChangeHandler={onSearchChange}
+      />
+      <CardList monsters={filteredMonsters} />
+    </div>
+  );
+};
 export default App;
