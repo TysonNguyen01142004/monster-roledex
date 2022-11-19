@@ -27,7 +27,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1 className="app-title">Hello World</h1>
+      <h1 className="app-title">Hello Tien</h1>
       <SearchBox
         placeholder={"Find monster"}
         type="search"
